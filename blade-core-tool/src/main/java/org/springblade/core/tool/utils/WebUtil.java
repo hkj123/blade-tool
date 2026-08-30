@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, DreamLu 卢春梦 (qq596392912@gmail.com).
+ * Copyright (c) 2018-2099, DreamLu 卢春梦 (qq596392912@gmail.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.springblade.core.tool.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springblade.core.tool.jackson.JsonUtil;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
@@ -26,11 +26,15 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
 
@@ -118,6 +122,19 @@ public class WebUtil extends org.springframework.web.util.WebUtils {
 	public static HttpServletRequest getRequest() {
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		return (requestAttributes == null) ? null : ((ServletRequestAttributes) requestAttributes).getRequest();
+	}
+
+	/**
+	 * 获取 RequestUri
+	 *
+	 * @param request HttpServletRequest
+	 * @return {RequestUri}
+	 */
+	public static String getRequestURI(HttpServletRequest request) {
+		if (request == null) {
+			return StringPool.EMPTY;
+		}
+		return request.getRequestURI();
 	}
 
 	/**
@@ -266,6 +283,77 @@ public class WebUtil extends org.springframework.web.util.WebUtils {
 			str = StringUtil.removeSuffix(sb.toString(), "&");
 		}
 		return str.replaceAll("&amp;", "&");
+	}
+
+	/**
+	 * 获取 request 请求体
+	 *
+	 * @param servletInputStream servletInputStream
+	 * @return body
+	 */
+	public static String getRequestBody(ServletInputStream servletInputStream) {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(servletInputStream, StandardCharsets.UTF_8));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (servletInputStream != null) {
+				try {
+					servletInputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 获取 request 请求内容
+	 *
+	 * @param request request
+	 * @return {String}
+	 */
+	public static String getRequestContent(HttpServletRequest request) {
+		try {
+			String queryString = request.getQueryString();
+			if (StringUtil.isNotBlank(queryString)) {
+				return new String(queryString.getBytes(Charsets.ISO_8859_1), Charsets.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
+			}
+			String charEncoding = request.getCharacterEncoding();
+			if (charEncoding == null) {
+				charEncoding = StringPool.UTF_8;
+			}
+			byte[] buffer = getRequestBody(request.getInputStream()).getBytes();
+			String str = new String(buffer, charEncoding).trim();
+			if (StringUtil.isBlank(str)) {
+				StringBuilder sb = new StringBuilder();
+				Enumeration<String> parameterNames = request.getParameterNames();
+				while (parameterNames.hasMoreElements()) {
+					String key = parameterNames.nextElement();
+					String value = request.getParameter(key);
+					StringUtil.appendBuilder(sb, key, "=", value, "&");
+				}
+				str = StringUtil.removeSuffix(sb.toString(), "&");
+			}
+			return str.replaceAll("&amp;", "&");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return StringPool.EMPTY;
+		}
 	}
 
 

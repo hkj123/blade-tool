@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, DreamLu 卢春梦 (qq596392912@gmail.com).
+ * Copyright (c) 2018-2099, DreamLu 卢春梦 (qq596392912@gmail.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.TypeUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -45,6 +45,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author L.cm
  */
+@SuppressWarnings("removal")
 public abstract class AbstractReadWriteJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {
 	private static final java.nio.charset.Charset DEFAULT_CHARSET = Charsets.UTF_8;
 
@@ -64,9 +65,9 @@ public abstract class AbstractReadWriteJackson2HttpMessageConverter extends Abst
 		initSsePrettyPrinter();
 	}
 
-	public AbstractReadWriteJackson2HttpMessageConverter(ObjectMapper readObjectMapper, ObjectMapper writeObjectMapper, MediaType... supportedMediaTypes) {
+	public AbstractReadWriteJackson2HttpMessageConverter(ObjectMapper readObjectMapper, ObjectMapper writeObjectMapper, List<MediaType> supportedMediaTypes) {
 		this(readObjectMapper, writeObjectMapper);
-		setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
+		setSupportedMediaTypes(supportedMediaTypes);
 	}
 
 	private void initSsePrettyPrinter() {
@@ -82,7 +83,7 @@ public abstract class AbstractReadWriteJackson2HttpMessageConverter extends Abst
 			return false;
 		}
 		AtomicReference<Throwable> causeRef = new AtomicReference<>();
-		if (this.objectMapper.canSerialize(clazz, causeRef)) {
+		if (this.defaultObjectMapper.canSerialize(clazz, causeRef)) {
 			return true;
 		}
 		logWarningIfNecessary(clazz, causeRef.get());

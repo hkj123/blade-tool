@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, DreamLu 卢春梦 (qq596392912@gmail.com).
+ * Copyright (c) 2018-2099, DreamLu 卢春梦 (qq596392912@gmail.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * 类工具类
+ * 类操作工具
  *
  * @author L.cm
  */
@@ -104,6 +104,26 @@ public class ClassUtil extends org.springframework.util.ClassUtils {
 		// 获取类上面的Annotation，可能包含组合注解，故采用spring的工具类
 		Class<?> beanType = handlerMethod.getBeanType();
 		return AnnotatedElementUtils.findMergedAnnotation(beanType, annotationType);
+	}
+
+
+	/**
+	 * 判断是否有注解 Annotation
+	 *
+	 * @param method         Method
+	 * @param annotationType 注解类
+	 * @param <A>            泛型标记
+	 * @return {boolean}
+	 */
+	public static <A extends Annotation> boolean isAnnotated(Method method, Class<A> annotationType) {
+		// 先找方法，再找方法上的类
+		boolean isMethodAnnotated = AnnotatedElementUtils.isAnnotated(method, annotationType);
+		if (isMethodAnnotated) {
+			return true;
+		}
+		// 获取类上面的Annotation，可能包含组合注解，故采用spring的工具类
+		Class<?> targetClass = method.getDeclaringClass();
+		return AnnotatedElementUtils.isAnnotated(targetClass, annotationType);
 	}
 
 }

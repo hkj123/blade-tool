@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,21 @@ package org.springblade.core.secure.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springblade.core.launch.constant.TokenConstant;
 import org.springblade.core.secure.BladeUser;
 import org.springblade.core.secure.TokenInfo;
 import org.springblade.core.secure.constant.SecureConstant;
 import org.springblade.core.secure.exception.SecureException;
+import org.springblade.core.secure.props.BladeTokenProperties;
 import org.springblade.core.secure.provider.IClientDetails;
 import org.springblade.core.secure.provider.IClientDetailsService;
 import org.springblade.core.tool.constant.RoleConstant;
 import org.springblade.core.tool.utils.*;
 
-import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.*;
 
 /**
@@ -45,20 +45,55 @@ public class SecureUtil {
 
 	private final static String HEADER = TokenConstant.HEADER;
 	private final static String BEARER = TokenConstant.BEARER;
+	private final static String CRYPTO = TokenConstant.CRYPTO;
 	private final static String ACCOUNT = TokenConstant.ACCOUNT;
 	private final static String USER_ID = TokenConstant.USER_ID;
 	private final static String ROLE_ID = TokenConstant.ROLE_ID;
+	private final static String DEPT_ID = TokenConstant.DEPT_ID;
 	private final static String USER_NAME = TokenConstant.USER_NAME;
 	private final static String ROLE_NAME = TokenConstant.ROLE_NAME;
 	private final static String TENANT_ID = TokenConstant.TENANT_ID;
 	private final static String CLIENT_ID = TokenConstant.CLIENT_ID;
 	private final static Integer AUTH_LENGTH = TokenConstant.AUTH_LENGTH;
-	private static final String BASE64_SECURITY = Base64.getEncoder().encodeToString(TokenConstant.SIGN_KEY.getBytes(Charsets.UTF_8));
+	private static IClientDetailsService CLIENT_DETAILS_SERVICE;
+	private static BladeTokenProperties TOKEN_PROPERTIES;
+	private static String BASE64_SECURITY;
 
-	private static final IClientDetailsService clientDetailsService;
 
-	static {
-		clientDetailsService = SpringUtil.getBean(IClientDetailsService.class);
+	/**
+	 * 获取客户端服务类
+	 *
+	 * @return clientDetailsService
+	 */
+	private static IClientDetailsService getClientDetailsService() {
+		if (CLIENT_DETAILS_SERVICE == null) {
+			CLIENT_DETAILS_SERVICE = SpringUtil.getBean(IClientDetailsService.class);
+		}
+		return CLIENT_DETAILS_SERVICE;
+	}
+
+	/**
+	 * 获取配置类
+	 *
+	 * @return jwtProperties
+	 */
+	private static BladeTokenProperties getTokenProperties() {
+		if (TOKEN_PROPERTIES == null) {
+			TOKEN_PROPERTIES = SpringUtil.getBean(BladeTokenProperties.class);
+		}
+		return TOKEN_PROPERTIES;
+	}
+
+	/**
+	 * 获取Token签名
+	 *
+	 * @return String
+	 */
+	private static String getBase64Security() {
+		if (BASE64_SECURITY == null) {
+			BASE64_SECURITY = Base64.getEncoder().encodeToString(getTokenProperties().getSignKey().getBytes(Charsets.UTF_8));
+		}
+		return BASE64_SECURITY;
 	}
 
 	/**
@@ -86,11 +121,30 @@ public class SecureUtil {
 	/**
 	 * 获取用户信息
 	 *
+	 * @param auth auth
+	 * @return BladeUser
+	 */
+	public static BladeUser getUser(String auth) {
+		return getUser(getClaims(auth));
+	}
+
+	/**
+	 * 获取用户信息
+	 *
 	 * @param request request
 	 * @return BladeUser
 	 */
 	public static BladeUser getUser(HttpServletRequest request) {
-		Claims claims = getClaims(request);
+		return getUser(getClaims(request));
+	}
+
+	/**
+	 * 获取用户信息
+	 *
+	 * @param claims Claims
+	 * @return BladeUser
+	 */
+	public static BladeUser getUser(Claims claims) {
 		if (claims == null) {
 			return null;
 		}
@@ -98,6 +152,7 @@ public class SecureUtil {
 		Long userId = Func.toLong(claims.get(SecureUtil.USER_ID));
 		String tenantId = Func.toStr(claims.get(SecureUtil.TENANT_ID));
 		String roleId = Func.toStr(claims.get(SecureUtil.ROLE_ID));
+		String deptId = Func.toStr(claims.get(SecureUtil.DEPT_ID));
 		String account = Func.toStr(claims.get(SecureUtil.ACCOUNT));
 		String roleName = Func.toStr(claims.get(SecureUtil.ROLE_NAME));
 		String userName = Func.toStr(claims.get(SecureUtil.USER_NAME));
@@ -107,6 +162,7 @@ public class SecureUtil {
 		bladeUser.setTenantId(tenantId);
 		bladeUser.setAccount(account);
 		bladeUser.setRoleId(roleId);
+		bladeUser.setDeptId(deptId);
 		bladeUser.setRoleName(roleName);
 		bladeUser.setUserName(userName);
 		return bladeUser;
@@ -118,7 +174,26 @@ public class SecureUtil {
 	 * @return boolean
 	 */
 	public static boolean isAdministrator() {
-		return StringUtil.containsAny(getUserRole(), RoleConstant.ADMIN);
+		return hasRole(RoleConstant.ADMINISTRATOR);
+	}
+
+	/**
+	 * 是否为管理员
+	 *
+	 * @return boolean
+	 */
+	public static boolean isAdmin() {
+		return hasRole(RoleConstant.ADMIN);
+	}
+
+	/**
+	 * 判定当前会话是否持有指定角色
+	 *
+	 * @param role 角色别名
+	 * @return boolean
+	 */
+	private static boolean hasRole(String role) {
+		return CollectionUtil.contains(Func.toStrArray(getUserRole()), role);
 	}
 
 	/**
@@ -248,6 +323,15 @@ public class SecureUtil {
 	}
 
 	/**
+	 * 是否已授权
+	 *
+	 * @return boolean
+	 */
+	public static boolean hasAuth() {
+		return getUser() != null;
+	}
+
+	/**
 	 * 获取Claims
 	 *
 	 * @param request request
@@ -255,19 +339,64 @@ public class SecureUtil {
 	 */
 	public static Claims getClaims(HttpServletRequest request) {
 		String auth = request.getHeader(SecureUtil.HEADER);
-		if (StringUtil.isNotBlank(auth) && auth.length() > AUTH_LENGTH) {
-			String headStr = auth.substring(0, 6).toLowerCase();
-			if (headStr.compareTo(SecureUtil.BEARER) == 0) {
-				auth = auth.substring(7);
-				return SecureUtil.parseJWT(auth);
-			}
-		} else {
-			String parameter = request.getParameter(SecureUtil.HEADER);
-			if (StringUtil.isNotBlank(parameter)) {
-				return SecureUtil.parseJWT(parameter);
-			}
+		if (StringUtil.isBlank(auth)) {
+			auth = request.getParameter(SecureUtil.HEADER);
+		}
+		return getClaims(auth);
+	}
+
+	/**
+	 * 获取Claims
+	 *
+	 * @param auth auth
+	 * @return Claims
+	 */
+	public static Claims getClaims(String auth) {
+		return SecureUtil.parseJWT(getToken(auth));
+	}
+
+	/**
+	 * 获取请求传递的token串
+	 *
+	 * @param auth token
+	 * @return String
+	 */
+	public static String getToken(String auth) {
+		if (isBearer(auth)) {
+			return auth.substring(AUTH_LENGTH);
+		}
+		if (isCrypto(auth)) {
+			return AesUtil.decryptFormBase64ToString(auth.substring(AUTH_LENGTH), getTokenProperties().getAesKey());
 		}
 		return null;
+	}
+
+	/**
+	 * 判断token类型为bearer
+	 *
+	 * @param auth token
+	 * @return String
+	 */
+	public static Boolean isBearer(String auth) {
+		if ((auth != null) && (auth.length() > AUTH_LENGTH)) {
+			String headStr = auth.substring(0, 6).toLowerCase();
+			return headStr.compareTo(BEARER) == 0;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断token类型为crypto
+	 *
+	 * @param auth token
+	 * @return String
+	 */
+	public static Boolean isCrypto(String auth) {
+		if ((auth != null) && (auth.length() > AUTH_LENGTH)) {
+			String headStr = auth.substring(0, 6).toLowerCase();
+			return headStr.compareTo(CRYPTO) == 0;
+		}
+		return false;
 	}
 
 	/**
@@ -297,9 +426,10 @@ public class SecureUtil {
 	 */
 	public static Claims parseJWT(String jsonWebToken) {
 		try {
-			return Jwts.parserBuilder()
-				.setSigningKey(Base64.getDecoder().decode(BASE64_SECURITY)).build()
-				.parseClaimsJws(jsonWebToken).getBody();
+			return Jwts.parser()
+				.verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(getBase64Security()))).build()
+				.parseSignedClaims(jsonWebToken)
+				.getPayload();
 		} catch (Exception ex) {
 			return null;
 		}
@@ -329,20 +459,16 @@ public class SecureUtil {
 			throw new SecureException("客户端认证失败!");
 		}
 
-		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
 		long nowMillis = System.currentTimeMillis();
 		Date now = new Date(nowMillis);
 
-		//生成签名密钥
-		byte[] apiKeySecretBytes = Base64.getDecoder().decode(BASE64_SECURITY);
-		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		// 生成签名密钥
+		SecretKey signingKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(getBase64Security()));
 
-		//添加构成JWT的类
-		JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
-			.setIssuer(issuer)
-			.setAudience(audience)
-			.signWith(signingKey);
+		// 添加构成JWT的类
+		JwtBuilder builder = Jwts.builder().header().add("typ", "JWT")
+			.and().issuer(issuer).audience().add(audience)
+			.and().signWith(signingKey);
 
 		//设置JWT参数
 		user.forEach(builder::claim);
@@ -361,12 +487,12 @@ public class SecureUtil {
 		}
 		long expMillis = nowMillis + expireMillis;
 		Date exp = new Date(expMillis);
-		builder.setExpiration(exp).setNotBefore(now);
+		builder.expiration(exp).notBefore(now);
 
 		// 组装Token信息
 		TokenInfo tokenInfo = new TokenInfo();
 		tokenInfo.setToken(builder.compact());
-		tokenInfo.setExpire((int) expireMillis / 1000);
+		tokenInfo.setExpire((int) (expireMillis / 1000));
 
 		return tokenInfo;
 	}
@@ -431,7 +557,7 @@ public class SecureUtil {
 	 * @return clientDetails
 	 */
 	private static IClientDetails clientDetails(String clientId) {
-		return clientDetailsService.loadClientByClientId(clientId);
+		return getClientDetailsService().loadClientByClientId(clientId);
 	}
 
 	/**

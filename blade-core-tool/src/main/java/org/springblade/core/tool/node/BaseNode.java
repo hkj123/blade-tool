@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,19 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 节点基类
  *
- * @author Chill
+ * @author smallchill
  */
 @Data
-public class BaseNode implements INode {
+public class BaseNode<T> implements INode<T> {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -49,7 +51,7 @@ public class BaseNode implements INode {
 	 * 子孙节点
 	 */
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	protected List<INode> children = new ArrayList<>();
+	protected List<T> children = new ArrayList<T>();
 
 	/**
 	 * 是否有子孙节点
@@ -59,6 +61,8 @@ public class BaseNode implements INode {
 
 	/**
 	 * 是否有子孙节点
+	 *
+	 * @return Boolean
 	 */
 	@Override
 	public Boolean getHasChildren() {

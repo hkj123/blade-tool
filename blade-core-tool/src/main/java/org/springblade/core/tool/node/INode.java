@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -21,21 +21,21 @@ import java.util.List;
 /**
  * Created by Blade.
  *
- * @author Chill
+ * @author smallchill
  */
-public interface INode extends Serializable {
+public interface INode<T> extends Serializable {
 
 	/**
 	 * 主键
 	 *
-	 * @return Integer
+	 * @return Long
 	 */
 	Long getId();
 
 	/**
 	 * 父主键
 	 *
-	 * @return Integer
+	 * @return Long
 	 */
 	Long getParentId();
 
@@ -44,7 +44,7 @@ public interface INode extends Serializable {
 	 *
 	 * @return List
 	 */
-	List<INode> getChildren();
+	List<T> getChildren();
 
 	/**
 	 * 是否有子孙节点

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package org.springblade.core.secure.config;
 
 
 import org.springblade.core.secure.registry.SecureRegistry;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.core.annotation.Order;
  * @author Chill
  */
 @Order
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @AutoConfigureBefore(SecureConfiguration.class)
 public class RegistryConfiguration {
 

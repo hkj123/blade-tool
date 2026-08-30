@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ package org.springblade.core.launch.constant;
  */
 public interface TokenConstant {
 
-	String SIGN_KEY = "bladexisapowerfulmicroservicearchitectureupgradedandoptimizedfromacommercialproject";
 	String AVATAR = "avatar";
 	String HEADER = "blade-auth";
 	String BEARER = "bearer";
+	String CRYPTO = "crypto";
 	String ACCESS_TOKEN = "access_token";
 	String REFRESH_TOKEN = "refresh_token";
 	String TOKEN_TYPE = "token_type";
@@ -33,14 +33,24 @@ public interface TokenConstant {
 	String ACCOUNT = "account";
 	String USER_ID = "user_id";
 	String ROLE_ID = "role_id";
+	String DEPT_ID = "dept_id";
 	String USER_NAME = "user_name";
 	String ROLE_NAME = "role_name";
 	String TENANT_ID = "tenant_id";
 	String OAUTH_ID = "oauth_id";
 	String CLIENT_ID = "client_id";
 	String LICENSE = "license";
-	String LICENSE_NAME = "powered by blade";
-	String DEFAULT_AVATAR = "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png";
+	String LICENSE_NAME = "powered by bladex";
+	String DEFAULT_AVATAR = "https://bladex.cn/images/logo-small.png";
 	Integer AUTH_LENGTH = 7;
+
+	/**
+	 * token签名
+	 */
+	String SIGN_KEY = "bladexisapowerfulmicroservicearchitectureupgradedandoptimizedfromacommercialproject";
+	/**
+	 * key安全长度，具体见：https://tools.ietf.org/html/rfc7518#section-3.2
+	 */
+	int SIGN_KEY_LENGTH = 32;
 
 }

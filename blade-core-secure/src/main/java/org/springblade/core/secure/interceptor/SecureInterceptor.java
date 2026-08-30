@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.springblade.core.tool.constant.BladeConstant;
 import org.springblade.core.tool.jackson.JsonUtil;
 import org.springblade.core.tool.utils.WebUtil;
 import org.springframework.http.MediaType;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -38,7 +38,7 @@ import java.util.Objects;
  */
 @Slf4j
 @AllArgsConstructor
-public class SecureInterceptor extends HandlerInterceptorAdapter {
+public class SecureInterceptor implements AsyncHandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

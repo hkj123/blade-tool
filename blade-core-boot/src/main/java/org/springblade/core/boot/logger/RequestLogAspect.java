@@ -11,7 +11,7 @@ import org.springblade.core.tool.utils.BeanUtil;
 import org.springblade.core.tool.utils.ClassUtil;
 import org.springblade.core.tool.utils.StringUtil;
 import org.springblade.core.tool.utils.WebUtil;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.InputStreamSource;
@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j
 @Aspect
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @Profile({AppConstant.DEV_CODE, AppConstant.TEST_CODE})
 public class RequestLogAspect {
 
@@ -166,7 +166,7 @@ public class RequestLogAspect {
 			afterReqArgs.add(requestMethod);
 			afterReqArgs.add(requestURI);
 			afterReqArgs.add(tookMs);
-			afterReqLog.append("================  Response End   ================\n");
+			afterReqLog.append("=================  Response End   ================\n");
 			log.info(afterReqLog.toString(), afterReqArgs.toArray());
 		}
 	}

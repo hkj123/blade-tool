@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package org.springblade.core.tool.config;
 
 
 import org.springblade.core.tool.utils.SpringUtil;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -28,7 +28,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  *
  * @author Chill
  */
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ToolConfiguration implements WebMvcConfigurer {
 

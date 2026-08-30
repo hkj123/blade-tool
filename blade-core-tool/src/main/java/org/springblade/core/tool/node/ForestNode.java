@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,19 @@ package org.springblade.core.tool.node;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
+
 
 /**
  * 森林节点类
  *
- * @author Chill
+ * @author smallchill
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ForestNode extends BaseNode {
+public class ForestNode extends BaseNode<ForestNode> {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**

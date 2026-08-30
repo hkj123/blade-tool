@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package org.springblade.core.launch;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.context.WebServerInitializedEvent;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.web.server.context.WebServerInitializedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
  * @author Chill
  */
 @Slf4j
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 public class StartEventListener {
 
 	@Async

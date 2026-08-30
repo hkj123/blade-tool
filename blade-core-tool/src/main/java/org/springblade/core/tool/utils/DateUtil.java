@@ -35,9 +35,9 @@ public class DateUtil {
 	/**
 	 * java 8 时间格式化
 	 */
-	public static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DateUtil.PATTERN_DATETIME);
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DateUtil.PATTERN_DATE);
-	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(DateUtil.PATTERN_TIME);
+	public static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(PATTERN_DATETIME);
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(PATTERN_DATE);
+	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(PATTERN_TIME);
 
 	/**
 	 * 获取当前日期
@@ -405,6 +405,8 @@ public class DateUtil {
 	 *
 	 * @param dateStr 时间字符串
 	 * @param pattern 表达式
+	 * @param query   移动查询
+	 * @param <T>     泛型
 	 * @return 时间
 	 */
 	public static <T> T parse(String dateStr, String pattern, TemporalQuery<T> query) {
@@ -453,6 +455,9 @@ public class DateUtil {
 
 	/**
 	 * Converts local date time to Calendar.
+	 *
+	 * @param localDateTime LocalDateTime
+	 * @return Calendar
 	 */
 	public static Calendar toCalendar(final LocalDateTime localDateTime) {
 		return GregorianCalendar.from(ZonedDateTime.of(localDateTime, ZoneId.systemDefault()));
@@ -589,7 +594,16 @@ public class DateUtil {
 	 * @return 时间
 	 */
 	public static String today() {
-		return format(new Date(), "yyyyMMdd");
+		return format(LocalDate.now(), "yyyyMMdd");
+	}
+
+	/**
+	 * 获取当前小时
+	 *
+	 * @return 当前小时 (0-23)
+	 */
+	public static Integer hour() {
+		return LocalDateTime.now().getHour();
 	}
 
 }

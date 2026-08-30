@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,15 @@ public interface BladeConstant {
 	 */
 	int DB_ADMIN_NON_LOCKED = 0;
 	int DB_ADMIN_LOCKED = 1;
+
+	/**
+	 * 顶级父节点id
+	 */
+	Long TOP_PARENT_ID = 0L;
+	/**
+	 * 顶级父节点名称
+	 */
+	String TOP_PARENT_NAME = "顶级";
 
 	/**
 	 * 管理员对应的租户ID

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@ package org.springblade.core.cloud.client;
 
 import org.springblade.core.launch.constant.AppConstant;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import java.lang.annotation.*;
@@ -34,9 +32,8 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @EnableDiscoveryClient
-@EnableCircuitBreaker
 @EnableFeignClients(AppConstant.BASE_PACKAGES)
-@SpringBootApplication(exclude = RibbonAutoConfiguration.class)
+@SpringBootApplication
 public @interface BladeCloudApplication {
 
 }

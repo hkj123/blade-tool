@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * Copyright (c) 2018-2099, Chill Zhuang 庄骞 (bladejava@qq.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.springblade.core.cloud.feign;
 
 import org.springblade.core.launch.constant.AppConstant;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import java.lang.annotation.*;
@@ -33,7 +32,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @EnableFeignClients(AppConstant.BASE_PACKAGES)
-@EnableAutoConfiguration(exclude = RibbonAutoConfiguration.class)
+@EnableAutoConfiguration
 public @interface EnableBladeFeign {
 	/**
 	 * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation
